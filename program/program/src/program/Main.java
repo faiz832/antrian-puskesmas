@@ -1,0 +1,2090 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package program;
+
+/**
+ *
+ * @author bintangkusuma
+ */
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+
+import UserDefinedException.InputKosongException;
+import UserDefinedException.dalamAntrianException;
+import UserDefinedException.TidakAdaBarisDipilih;
+import UserDefinedException.PasienDapatAntrianException;
+import UserDefinedException.DataTidakTersediaException;
+import UserDefinedException.IdTerpakaiException;
+
+public class Main extends javax.swing.JFrame {
+    
+    private static Connection c;
+    private static Statement s;
+    private static ResultSet rs;
+    private DefaultTableModel modelUmum;
+    private DefaultTableModel modelKhusus;
+    private DefaultTableModel modelPasien;
+    private DefaultTableModel modelDokter;
+    
+    private static void openDB() throws ClassNotFoundException, SQLException{
+        String URL = "jdbc:mysql://localhost:3306/puskesmas";
+        String Username = "root";
+        String Password = "";
+
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        c = DriverManager.getConnection(URL,Username,Password);
+        s = c.createStatement();
+    }
+    
+    private static void closeDB() {
+        try{
+            rs.close();
+            s.close();
+            c.close();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public Main() {
+        initComponents();
+        String[] headerAntrian = {"No.","Pasien","Dokter","Penyakit"};
+        String[] headerPasien = {"ID Pasien","Nama Pasien", "Umur", "Gender"};
+        String[] headerDokter = {"ID Dokter","Nama Dokter","Spesialisasi"};
+        
+        modelUmum = new DefaultTableModel(headerAntrian,0);
+        modelKhusus = new DefaultTableModel(headerAntrian,0);
+        modelPasien = new DefaultTableModel(headerPasien,0);
+        modelDokter = new DefaultTableModel(headerDokter,0);
+        
+        jTableUmum.setModel(modelUmum);
+        jTableKhusus.setModel(modelKhusus);
+        jTablePasien.setModel(modelPasien);
+        jTableDokter.setModel(modelDokter);
+        
+        try {
+            openDB();
+            rs = s.executeQuery("SELECT * FROM AntrianRuangUmum AS A1 "
+                    + "LEFT JOIN Pasien AS P ON A1.IDPasien = P.IDPasien "
+                    + "LEFT JOIN Dokter AS D ON A1.IDDokter = D.IDDokter ");
+
+            while(rs.next()){
+                Object[] row = {
+                        rs.getInt("nomorAntrian"),
+                        rs.getString("namaPasien"),
+                        rs.getString("namaDokter"),
+                        rs.getString("spesialisasi")
+                };
+                modelUmum.addRow(row);
+            }
+            
+            String baruUmum = String.valueOf(modelUmum.getRowCount() + 1);
+            jTextFieldNoUmum.setText(baruUmum);
+            
+            rs = s.executeQuery("SELECT * FROM AntrianRuangKhusus AS A2 "
+                    + "LEFT JOIN Pasien AS P ON A2.IDPasien = P.IDPasien "
+                    + "LEFT JOIN Dokter AS D ON A2.IDDokter = D.IDDokter");
+
+            while(rs.next()){
+                Object[] row = {
+                        rs.getInt("nomorAntrian"),
+                        rs.getString("namaPasien"),
+                        rs.getString("namaDokter"),
+                        rs.getString("spesialisasi")
+                };
+                modelKhusus.addRow(row);
+            }
+            
+            String baruKhusus = String.valueOf(modelKhusus.getRowCount() + 1);
+            jTextFieldNoKhusus.setText(baruKhusus);
+            
+            rs = s.executeQuery("SELECT * FROM Pasien");
+
+            while(rs.next()){
+                Object[] row = {
+                        rs.getInt("IDPasien"),
+                        rs.getString("namaPasien"),
+                        rs.getInt("umur"),
+                        rs.getString("jenisKelamin")
+                };
+                modelPasien.addRow(row);
+            }
+            
+            rs = s.executeQuery("SELECT * FROM Dokter");
+            
+            while(rs.next()){
+                Object[] row = {
+                        rs.getInt("IDDokter"),
+                        rs.getString("namaDokter"),
+                        rs.getString("spesialisasi")
+                };
+                modelDokter.addRow(row);
+            }
+            
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+
+        }finally{
+            closeDB();
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        mainPanel = new javax.swing.JPanel();
+        jTabbedPaneMenu = new javax.swing.JTabbedPane();
+        jTabbedPaneRuangan = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTableUmum = new javax.swing.JTable();
+        jTextFieldCariUmum = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jTextFieldNoUmum = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jTextFieldPasienUmum = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jTextFieldDokterUmum = new javax.swing.JTextField();
+        jButtonUpdateUmum = new javax.swing.JButton();
+        jButtonInputUmum = new javax.swing.JButton();
+        jButtonDeleteUmum = new javax.swing.JButton();
+        jButtonCariUmum = new javax.swing.JButton();
+        jButtonClearUmum = new javax.swing.JButton();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTableKhusus = new javax.swing.JTable();
+        jTextFieldCariKhusus = new javax.swing.JTextField();
+        jButtonCariKhusus = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jTextFieldNoKhusus = new javax.swing.JTextField();
+        jTextFieldPasienKhusus = new javax.swing.JTextField();
+        jTextFieldDokterKhusus = new javax.swing.JTextField();
+        jButtonUpdateKhusus = new javax.swing.JButton();
+        jButtonClearKhusus = new javax.swing.JButton();
+        jButtonInputKhusus = new javax.swing.JButton();
+        jButtonDeleteKhusus = new javax.swing.JButton();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTablePasien = new javax.swing.JTable();
+        jTextFieldCariPasien = new javax.swing.JTextField();
+        jButtonCariPasien = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jTextFieldIdPasien = new javax.swing.JTextField();
+        jTextFieldNamaPasien = new javax.swing.JTextField();
+        jButtonUpdatePasien = new javax.swing.JButton();
+        jButtonClearPasien = new javax.swing.JButton();
+        jButtonInputPasien = new javax.swing.JButton();
+        jButtonDeletePasien = new javax.swing.JButton();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jTextFieldUmurPasien = new javax.swing.JTextField();
+        jComboBoxGender = new javax.swing.JComboBox<>();
+        jLabel20 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTableDokter = new javax.swing.JTable();
+        jTextFieldCariDokter = new javax.swing.JTextField();
+        jButtonCariDokter = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jTextFieldIdDokter = new javax.swing.JTextField();
+        jTextFieldNamaDokter = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        jComboBoxSpesialis = new javax.swing.JComboBox<>();
+        jButtonUpdateDokter = new javax.swing.JButton();
+        jButtonClearDokter = new javax.swing.JButton();
+        jButtonInputDokter = new javax.swing.JButton();
+        jButtonDeleteDokter = new javax.swing.JButton();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(175, 215, 215));
+
+        jScrollPane1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jTableUmum.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTableUmum.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableUmumMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTableUmum);
+
+        jLabel1.setText("No. Antrian");
+
+        jLabel2.setText("ID Pasien");
+
+        jLabel3.setText("ID Dokter");
+
+        jButtonUpdateUmum.setText("Update");
+        jButtonUpdateUmum.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUpdateUmumActionPerformed(evt);
+            }
+        });
+
+        jButtonInputUmum.setText("Input");
+        jButtonInputUmum.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonInputUmumActionPerformed(evt);
+            }
+        });
+
+        jButtonDeleteUmum.setText("Delete");
+        jButtonDeleteUmum.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDeleteUmumActionPerformed(evt);
+            }
+        });
+
+        jButtonCariUmum.setText("Cari!");
+        jButtonCariUmum.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCariUmumActionPerformed(evt);
+            }
+        });
+
+        jButtonClearUmum.setText("Clear");
+        jButtonClearUmum.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonClearUmumActionPerformed(evt);
+            }
+        });
+
+        jLabel12.setText("Ruang Umum");
+
+        jLabel18.setIcon(new javax.swing.ImageIcon("C:\\Users\\risya\\Downloads\\49075 (2).jpg")); // NOI18N
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jTextFieldCariUmum, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonCariUmum))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jTextFieldNoUmum, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel3))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(jTextFieldDokterUmum, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                                            .addComponent(jTextFieldPasienUmum, javax.swing.GroupLayout.Alignment.TRAILING)))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(42, 42, 42)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jButtonUpdateUmum)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jButtonClearUmum)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jButtonInputUmum))
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addGap(3, 3, 3)
+                                                .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(jButtonDeleteUmum))
+                                        .addGap(0, 0, Short.MAX_VALUE))))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(143, 143, 143)
+                        .addComponent(jLabel12)))
+                .addContainerGap(58, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldCariUmum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonCariUmum)
+                    .addComponent(jLabel12))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(jTextFieldNoUmum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jTextFieldPasienUmum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(jTextFieldDokterUmum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonUpdateUmum)
+                            .addComponent(jButtonClearUmum)
+                            .addComponent(jButtonInputUmum))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonDeleteUmum)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+
+        jTabbedPaneRuangan.addTab("Ruang Umum", jPanel1);
+
+        jPanel4.setBackground(new java.awt.Color(175, 215, 215));
+
+        jTableKhusus.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTableKhusus.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableKhususMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTableKhusus);
+
+        jButtonCariKhusus.setText("Cari!");
+        jButtonCariKhusus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCariKhususActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("No. Antrian");
+
+        jLabel6.setText("ID Pasien");
+
+        jLabel7.setText("ID Dokter");
+
+        jButtonUpdateKhusus.setText("Update");
+        jButtonUpdateKhusus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUpdateKhususActionPerformed(evt);
+            }
+        });
+
+        jButtonClearKhusus.setText("Clear");
+        jButtonClearKhusus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonClearKhususActionPerformed(evt);
+            }
+        });
+
+        jButtonInputKhusus.setText("Input");
+        jButtonInputKhusus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonInputKhususActionPerformed(evt);
+            }
+        });
+
+        jButtonDeleteKhusus.setText("Delete");
+        jButtonDeleteKhusus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDeleteKhususActionPerformed(evt);
+            }
+        });
+
+        jLabel13.setText("Ruang Khusus");
+
+        jLabel19.setIcon(new javax.swing.ImageIcon("C:\\Users\\risya\\Downloads\\49075 (2).jpg")); // NOI18N
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addComponent(jTextFieldCariKhusus)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonCariKhusus))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(144, 144, 144)
+                        .addComponent(jLabel13))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel7))
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextFieldDokterKhusus, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jTextFieldPasienKhusus, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+                                .addComponent(jTextFieldNoKhusus, javax.swing.GroupLayout.Alignment.TRAILING))))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(122, 122, 122)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jButtonUpdateKhusus)
+                                    .addComponent(jButtonDeleteKhusus))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonClearKhusus)
+                                .addGap(6, 6, 6)
+                                .addComponent(jButtonInputKhusus)))))
+                .addContainerGap(53, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldCariKhusus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonCariKhusus)
+                    .addComponent(jLabel13))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(jTextFieldNoKhusus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(jTextFieldPasienKhusus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel7)
+                            .addComponent(jTextFieldDokterKhusus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonClearKhusus)
+                            .addComponent(jButtonInputKhusus)
+                            .addComponent(jButtonUpdateKhusus))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonDeleteKhusus)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 7, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+
+        jTabbedPaneRuangan.addTab("Ruang Khusus", jPanel4);
+
+        jTabbedPaneMenu.addTab("Antrian", jTabbedPaneRuangan);
+
+        jPanel2.setBackground(new java.awt.Color(175, 215, 215));
+
+        jTablePasien.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTablePasien.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTablePasienMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(jTablePasien);
+
+        jButtonCariPasien.setText("Cari!");
+        jButtonCariPasien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCariPasienActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("ID Pasien");
+
+        jLabel8.setText("Nama Pasien");
+
+        jButtonUpdatePasien.setText("Update");
+        jButtonUpdatePasien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUpdatePasienActionPerformed(evt);
+            }
+        });
+
+        jButtonClearPasien.setText("Clear");
+        jButtonClearPasien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonClearPasienActionPerformed(evt);
+            }
+        });
+
+        jButtonInputPasien.setText("Input");
+        jButtonInputPasien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonInputPasienActionPerformed(evt);
+            }
+        });
+
+        jButtonDeletePasien.setText("Delete");
+        jButtonDeletePasien.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDeletePasienActionPerformed(evt);
+            }
+        });
+
+        jLabel14.setText("Data Pasien");
+
+        jLabel16.setText("Umur");
+
+        jLabel17.setText("Gender");
+
+        jComboBoxGender.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "L", "P" }));
+
+        jLabel20.setIcon(new javax.swing.ImageIcon("C:\\Users\\risya\\Downloads\\49075 (2).jpg")); // NOI18N
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(48, 48, 48)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel8)
+                                        .addComponent(jLabel4))
+                                    .addComponent(jLabel17)
+                                    .addComponent(jLabel16))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTextFieldIdPasien)
+                                    .addComponent(jTextFieldNamaPasien, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+                                    .addComponent(jTextFieldUmurPasien)
+                                    .addComponent(jComboBoxGender, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jButtonDeletePasien)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addComponent(jButtonUpdatePasien)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(jButtonClearPasien)
+                                    .addGap(12, 12, 12)
+                                    .addComponent(jButtonInputPasien))
+                                .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(41, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jTextFieldCariPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonCariPasien)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel14)
+                        .addGap(168, 168, 168))))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldCariPasien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonCariPasien)
+                    .addComponent(jLabel14))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(jTextFieldIdPasien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel8)
+                            .addComponent(jTextFieldNamaPasien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextFieldUmurPasien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel16))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel17)
+                            .addComponent(jComboBoxGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonUpdatePasien)
+                            .addComponent(jButtonClearPasien)
+                            .addComponent(jButtonInputPasien))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonDeletePasien)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 10, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        jTabbedPaneMenu.addTab("Data Pasien", jPanel2);
+
+        jPanel3.setBackground(new java.awt.Color(175, 215, 215));
+
+        jTableDokter.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTableDokter.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableDokterMouseClicked(evt);
+            }
+        });
+        jScrollPane4.setViewportView(jTableDokter);
+
+        jButtonCariDokter.setText("Cari!");
+        jButtonCariDokter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCariDokterActionPerformed(evt);
+            }
+        });
+
+        jLabel9.setText("ID Dokter");
+
+        jLabel10.setText("Nama Dokter");
+
+        jLabel11.setText("Spesialis");
+
+        jComboBoxSpesialis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Umum", "Gigi", "Mata", "Jantung", "Kulit" }));
+
+        jButtonUpdateDokter.setText("Update");
+        jButtonUpdateDokter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUpdateDokterActionPerformed(evt);
+            }
+        });
+
+        jButtonClearDokter.setText("Clear");
+        jButtonClearDokter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonClearDokterActionPerformed(evt);
+            }
+        });
+
+        jButtonInputDokter.setText("Input");
+        jButtonInputDokter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonInputDokterActionPerformed(evt);
+            }
+        });
+
+        jButtonDeleteDokter.setText("Delete");
+        jButtonDeleteDokter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDeleteDokterActionPerformed(evt);
+            }
+        });
+
+        jLabel15.setText("Data Dokter");
+
+        jLabel21.setIcon(new javax.swing.ImageIcon("C:\\Users\\risya\\Downloads\\49075 (2).jpg")); // NOI18N
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jTextFieldCariDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonCariDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(45, 45, 45)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel10)
+                                    .addComponent(jLabel11)
+                                    .addComponent(jLabel9))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTextFieldNamaDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jComboBoxSpesialis, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jTextFieldIdDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jButtonDeleteDokter)
+                                .addGroup(jPanel3Layout.createSequentialGroup()
+                                    .addComponent(jButtonUpdateDokter)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jButtonClearDokter)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jButtonInputDokter))
+                                .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(178, 178, 178)
+                        .addComponent(jLabel15)))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldCariDokter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonCariDokter)
+                    .addComponent(jLabel15))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9)
+                            .addComponent(jTextFieldIdDokter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel10)
+                            .addComponent(jTextFieldNamaDokter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel11)
+                            .addComponent(jComboBoxSpesialis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(21, 21, 21)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonUpdateDokter)
+                            .addComponent(jButtonClearDokter)
+                            .addComponent(jButtonInputDokter))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonDeleteDokter)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                        .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(17, 17, 17))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addContainerGap())))
+        );
+
+        jTabbedPaneMenu.addTab("Data Dokter", jPanel3);
+
+        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPaneMenu)
+        );
+        mainPanelLayout.setVerticalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPaneMenu)
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jTableKhususMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableKhususMouseClicked
+            
+        try{
+            openDB();
+            
+            jTextFieldNoKhusus.setEditable(false);
+        
+            int row = jTableKhusus.getSelectedRow();
+
+            String noAntrian = jTableKhusus.getValueAt(row, 0).toString();
+            
+            rs = s.executeQuery("SELECT * FROM AntrianRuangKhusus WHERE nomorAntrian = '" + noAntrian + "' ");
+            
+            rs.next();
+            String idPasien = rs.getString("IDPasien");
+            String idDokter = rs.getString("IDDokter");
+            
+            jTextFieldNoKhusus.setText(noAntrian);
+            jTextFieldPasienKhusus.setText(idPasien);
+            jTextFieldDokterKhusus.setText(idDokter);
+
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        }finally {
+            closeDB();
+        }
+
+        
+    }//GEN-LAST:event_jTableKhususMouseClicked
+
+    private void jTablePasienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePasienMouseClicked
+        
+        int row = jTablePasien.getSelectedRow();
+
+        String idPasien = jTablePasien.getValueAt(row, 0).toString();
+        String namaPasien = jTablePasien.getValueAt(row, 1).toString();
+        String umurPasien = jTablePasien.getValueAt(row, 2).toString();
+        String genderPasien = jTablePasien.getValueAt(row, 3).toString();
+
+        jTextFieldIdPasien.setText(idPasien);
+        jTextFieldNamaPasien.setText(namaPasien);
+        jTextFieldUmurPasien.setText(umurPasien);
+        jComboBoxGender.setSelectedItem(genderPasien);
+        jTextFieldIdPasien.setEditable(false);
+    }//GEN-LAST:event_jTablePasienMouseClicked
+
+    private void jTableDokterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableDokterMouseClicked
+        
+        int row = jTableDokter.getSelectedRow();
+
+        String idDokter = jTableDokter.getValueAt(row, 0).toString();
+        String namaDokter = jTableDokter.getValueAt(row, 1).toString();
+        String spesialisasi = jTableDokter.getValueAt(row, 2).toString();
+
+        jTextFieldIdDokter.setText(idDokter);
+        jTextFieldNamaDokter.setText(namaDokter);
+        jComboBoxSpesialis.setSelectedItem(spesialisasi);
+        jTextFieldIdDokter.setEditable(false);
+    }//GEN-LAST:event_jTableDokterMouseClicked
+
+    private void jButtonClearKhususActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClearKhususActionPerformed
+        jTextFieldNoKhusus.setText("");
+        jTextFieldPasienKhusus.setText("");
+        jTextFieldDokterKhusus.setText("");
+        jTextFieldNoKhusus.setEditable(true);
+    }//GEN-LAST:event_jButtonClearKhususActionPerformed
+
+    private void jButtonClearPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClearPasienActionPerformed
+        jTextFieldIdPasien.setText("");
+        jTextFieldNamaPasien.setText("");
+        jTextFieldUmurPasien.setText("");
+        jComboBoxGender.setSelectedIndex(0);
+        jTextFieldIdPasien.setEditable(true);
+    }//GEN-LAST:event_jButtonClearPasienActionPerformed
+
+    private void jButtonClearDokterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClearDokterActionPerformed
+        jTextFieldIdDokter.setText("");
+        jTextFieldNamaDokter.setText("");
+        jComboBoxSpesialis.setSelectedIndex(0);
+        jTextFieldIdDokter.setEditable(true);
+    }//GEN-LAST:event_jButtonClearDokterActionPerformed
+
+    private void jButtonUpdateKhususActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateKhususActionPerformed
+        String noAntrian = jTextFieldNoKhusus.getText();
+        String idPasien = jTextFieldPasienKhusus.getText();
+        String idDokter = jTextFieldDokterKhusus.getText();
+        
+        Pasien pasien = new Pasien(idPasien);
+        Dokter dokter = new Dokter(idDokter);
+        AntrianRuangKhusus antrian = new AntrianRuangKhusus(noAntrian,pasien,dokter);
+        
+        try{
+            if(noAntrian.isEmpty() || idPasien.isEmpty() || idDokter.isEmpty() || noAntrian=="" || idPasien=="" || idDokter==""){
+                throw new InputKosongException();
+            }
+            
+            int cek = Integer.parseInt(noAntrian);
+            cek = Integer.parseInt(idPasien);
+            cek = Integer.parseInt(idDokter);
+            
+            int selectedRow = jTableKhusus.getSelectedRow();
+            if (selectedRow == -1) {
+                throw new TidakAdaBarisDipilih();
+            }
+            
+            cek = pasien.cekAdaPasienKhusus(idPasien);
+            if(cek > 0 && Integer.parseInt(idPasien) != Integer.parseInt(antrian.getIdPasienDatabase(noAntrian))){
+                throw new PasienDapatAntrianException();
+            }
+            
+            cek = antrian.cekDataPasien(pasien);
+            if(cek < 1){
+                throw new DataTidakTersediaException();
+            }
+            
+            // cek dokter belum daftar
+            cek = antrian.cekDataDokter(dokter);
+            if(cek < 1){
+                throw new DataTidakTersediaException();
+            }
+            
+            openDB();
+            
+            int result = JOptionPane.showConfirmDialog(null, "Update Antrian "+idPasien+antrian.getIdPasienDatabase(noAntrian)+" ?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                antrian.updateDatabaseAntrian(noAntrian, pasien, dokter);
+
+                rs = s.executeQuery("SELECT * FROM AntrianRuangKhusus AS A2 "
+                        + "LEFT JOIN Pasien AS P ON A2.IDPasien = P.IDPasien "
+                        + "LEFT JOIN Dokter AS D ON A2.IDDokter = D.IDDokter "
+                        + "WHERE nomorAntrian = '" + noAntrian + "' ");
+
+                rs.next();
+                String namaPasien = rs.getString("namaPasien");
+                String namaDokter = rs.getString("namaDokter");
+
+                modelKhusus.setValueAt(noAntrian,jTableKhusus.getSelectedRow(),0);
+                modelKhusus.setValueAt(namaPasien,jTableKhusus.getSelectedRow(),1);
+                modelKhusus.setValueAt(namaDokter,jTableKhusus.getSelectedRow(),2);
+
+                jTextFieldNoKhusus.setText("");
+                jTextFieldPasienKhusus.setText("");
+                jTextFieldDokterKhusus.setText("");
+
+                jTextFieldNoKhusus.setEditable(true);
+
+                JOptionPane.showMessageDialog(null, "Antrian berhasil diupdate!");
+            }
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        } catch (InputKosongException ex) {
+            ex.tampilpesan();
+        } catch (TidakAdaBarisDipilih ex) {
+            ex.tampilpesan();
+        } catch (DataTidakTersediaException ex) {
+            ex.tampilpesan();
+        } catch (PasienDapatAntrianException ex) {
+            ex.tampilpesan();
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input tidak valid");
+        }finally {
+            closeDB();
+        }
+    }//GEN-LAST:event_jButtonUpdateKhususActionPerformed
+
+    private void jButtonUpdatePasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdatePasienActionPerformed
+        
+        String idPasien = jTextFieldIdPasien.getText();
+        String namaPasien = jTextFieldNamaPasien.getText();
+        String umur = jTextFieldUmurPasien.getText();
+        String gender = jComboBoxGender.getSelectedItem().toString();
+        
+        Pasien pasien = new Pasien(idPasien,namaPasien,umur,gender);
+        
+        try{
+            openDB();
+            if(idPasien.isEmpty() || namaPasien.isEmpty() || umur.isEmpty() || idPasien=="" || namaPasien=="" || umur==""){
+                throw new InputKosongException();
+            }
+            int cekID = Integer.parseInt(idPasien);
+            int cekUmur = Integer.parseInt(umur);
+            
+            int selectedRow = jTablePasien.getSelectedRow();
+            if (selectedRow == -1) {
+                throw new TidakAdaBarisDipilih();
+            }
+            int result = JOptionPane.showConfirmDialog(null, "Update Pasien ID :  "+idPasien+" ?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                pasien.updateDatabasePasien(idPasien, namaPasien, umur, gender);
+
+                modelPasien.setValueAt(idPasien,jTablePasien.getSelectedRow(),0);
+                modelPasien.setValueAt(namaPasien,jTablePasien.getSelectedRow(),1);
+                modelPasien.setValueAt(umur,jTablePasien.getSelectedRow(),2);
+                modelPasien.setValueAt(gender,jTablePasien.getSelectedRow(),3);
+
+                jTextFieldIdPasien.setText("");
+                jTextFieldNamaPasien.setText("");
+                jTextFieldUmurPasien.setText("");
+                jComboBoxGender.setSelectedIndex(0);
+
+                jTextFieldIdPasien.setEditable(true);
+
+                JOptionPane.showMessageDialog(null, "Data Pasien berhasil diupdate!");
+            }
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        } catch (InputKosongException ex) {
+            ex.tampilpesan();
+        } catch (TidakAdaBarisDipilih ex) {
+            ex.tampilpesan();
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input tidak valid");
+        }finally {
+            closeDB();
+        }
+        
+    }//GEN-LAST:event_jButtonUpdatePasienActionPerformed
+
+    private void jButtonUpdateDokterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateDokterActionPerformed
+        String idDokter = jTextFieldIdDokter.getText();
+        String namaDokter = jTextFieldNamaDokter.getText();
+        String spesialis = jComboBoxSpesialis.getSelectedItem().toString();
+        
+        Dokter dokter = new Dokter(idDokter,namaDokter,spesialis);
+        
+        try{
+            openDB();
+            if(idDokter.isEmpty() || namaDokter.isEmpty() || spesialis.isEmpty() || idDokter=="" || namaDokter=="" || spesialis==""){
+                throw new InputKosongException();
+            }
+            
+            int cek = Integer.parseInt(idDokter);
+            
+            int selectedRow = jTableDokter.getSelectedRow();
+            if (selectedRow == -1) {
+                throw new TidakAdaBarisDipilih();
+            }
+            int result = JOptionPane.showConfirmDialog(null, "Update Dokter ID :  "+idDokter+" ?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                dokter.updateDatabaseDokter(idDokter, namaDokter, spesialis);
+
+                modelDokter.setValueAt(idDokter,jTableDokter.getSelectedRow(),0);
+                modelDokter.setValueAt(namaDokter,jTableDokter.getSelectedRow(),1);
+                modelDokter.setValueAt(spesialis,jTableDokter.getSelectedRow(),2);
+
+                jTextFieldIdDokter.setText("");
+                jTextFieldNamaDokter.setText("");
+                jComboBoxSpesialis.setSelectedIndex(0);
+
+                jTextFieldIdDokter.setEditable(true);
+
+                JOptionPane.showMessageDialog(null, "Data Dokter berhasil diupdate!");
+            }
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        } catch (InputKosongException ex) {
+            ex.tampilpesan();
+        } catch (TidakAdaBarisDipilih ex) {
+            ex.tampilpesan();
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input tidak valid");
+        }finally {
+            closeDB();
+        }
+    }//GEN-LAST:event_jButtonUpdateDokterActionPerformed
+
+    private void jButtonInputKhususActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInputKhususActionPerformed
+        
+        String noAntrian = jTextFieldNoKhusus.getText();
+        String idPasien = jTextFieldPasienKhusus.getText();
+        String idDokter = jTextFieldDokterKhusus.getText();
+        
+        Pasien pasien = new Pasien(idPasien);
+        Dokter dokter = new Dokter(idDokter);
+        AntrianRuangKhusus antrian = new AntrianRuangKhusus(noAntrian,pasien,dokter);
+        
+        try{
+            openDB();
+            if(noAntrian.isEmpty() || idPasien.isEmpty() || idDokter.isEmpty() || noAntrian=="" || idPasien=="" || idDokter==""){
+                throw new InputKosongException();
+            }
+            
+            int cek = Integer.parseInt(idPasien);
+            cek = Integer.parseInt(idDokter);
+            
+            int nomorA = Integer.parseInt(noAntrian);
+            rs = s.executeQuery("SELECT COUNT(*) AS total FROM AntrianRuangKhusus");
+            rs.next();
+            int totalData = Integer.parseInt(rs.getString("total"));
+            int loop = totalData - nomorA;
+            int noSebelum = totalData;
+            int noSesudah = totalData + 1;
+            
+            // cek ada pasien dalam antrian
+            cek = pasien.cekAdaPasienKhusus(idPasien);
+            if(cek > 0){
+                throw new PasienDapatAntrianException();
+            }
+                        
+            // cek pasien belum daftar
+            cek = antrian.cekDataPasien(pasien);
+            if(cek < 1){
+                throw new DataTidakTersediaException();
+            }
+            
+            // cek dokter belum daftar
+            cek = antrian.cekDataDokter(dokter);
+            if(cek < 1){
+                throw new DataTidakTersediaException();
+            }
+            int result = JOptionPane.showConfirmDialog(null, "Tambah data ke antrian ?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                if(nomorA > 0){
+                    if(nomorA > totalData){
+                        noAntrian = String.valueOf(totalData + 1);
+
+                        antrian.inputDatabaseAntrian(noAntrian, pasien, dokter);
+
+                        rs = s.executeQuery("SELECT * FROM AntrianRuangKhusus AS A1 "
+                                + "LEFT JOIN Pasien AS P ON A1.IDPasien = P.IDPasien "
+                                + "LEFT JOIN Dokter AS D ON A1.IDDokter = D.IDDokter "
+                                + "WHERE nomorAntrian = '" + noAntrian + "' ");
+
+                        rs.next();
+                        String namaPasien = rs.getString("namaPasien");
+                        String namaDokter = rs.getString("namaDokter");
+                        String spesialis = rs.getString("spesialisasi");
+
+                        Object[] row = {noAntrian, namaPasien, namaDokter, spesialis};
+                        modelKhusus.addRow(row);
+
+
+                        JOptionPane.showMessageDialog(null, "Data berhasil ditambahkan ke Antrian!");
+
+                    }else{
+                    
+                        Object[] row1 = {"", "", "", ""};
+                        modelKhusus.addRow(row1);
+
+                        for(int i = loop + 1; i > 0; i--){
+
+                            s.executeUpdate(
+                                "UPDATE AntrianRuangKhusus SET nomorAntrian = '" + noSesudah + "' WHERE nomorAntrian = '" + noSebelum + "';"
+                            );
+
+                            int getNo = Integer.parseInt(jTableKhusus.getValueAt(noSebelum-1,0).toString()) + 1;
+                            String pindahNo = String.valueOf(getNo);
+                            String pindahPasien = jTableKhusus.getValueAt(noSebelum-1, 1).toString();
+                            String pindahDokter = jTableKhusus.getValueAt(noSebelum-1, 2).toString();
+                            String pindahSpesialis = jTableKhusus.getValueAt(noSebelum-1, 3).toString();
+
+                            modelKhusus.setValueAt(pindahNo,noSebelum,0);
+                            modelKhusus.setValueAt(pindahPasien,noSebelum,1);
+                            modelKhusus.setValueAt(pindahDokter,noSebelum,2);
+                            modelKhusus.setValueAt(pindahSpesialis,noSebelum,3);
+
+                            noSesudah--;
+                            noSebelum--;
+                        }
+
+                        antrian.inputDatabaseAntrian(noAntrian, pasien, dokter);
+
+                        rs = s.executeQuery("SELECT * FROM AntrianRuangKhusus AS A1 "
+                                + "LEFT JOIN Pasien AS P ON A1.IDPasien = P.IDPasien "
+                                + "LEFT JOIN Dokter AS D ON A1.IDDokter = D.IDDokter "
+                                + "WHERE nomorAntrian = '" + noAntrian + "' ");
+
+                        rs.next();
+                        String namaPasien = rs.getString("namaPasien");
+                        String namaDokter = rs.getString("namaDokter");
+                        String spesialis = rs.getString("spesialisasi");
+
+                        modelKhusus.setValueAt(noAntrian,noSebelum,0);
+                        modelKhusus.setValueAt(namaPasien,noSebelum,1);
+                        modelKhusus.setValueAt(namaDokter,noSebelum,2);
+                        modelKhusus.setValueAt(spesialis,noSebelum,3);
+
+                        JOptionPane.showMessageDialog(null, "Data berhasil ditambahkan ke Antrian!");
+                    }
+
+                }else{
+                    JOptionPane.showMessageDialog(null, "Nomor antrian harus angka yang lebih dari 0");
+                }
+                jTextFieldNoKhusus.setText("");
+                jTextFieldPasienKhusus.setText("");
+                jTextFieldDokterKhusus.setText("");
+
+                jTextFieldNoKhusus.setEditable(true);
+            }
+            
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        } catch (InputKosongException ex) {
+            ex.tampilpesan();
+        } catch (PasienDapatAntrianException ex) {
+            ex.tampilpesan();
+        } catch (DataTidakTersediaException ex) {
+            ex.tampilpesan();
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input tidak valid");
+        }finally {
+            closeDB();
+        }
+    }//GEN-LAST:event_jButtonInputKhususActionPerformed
+
+    private void jButtonInputPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInputPasienActionPerformed
+        String idPasien = jTextFieldIdPasien.getText();
+        String namaPasien = jTextFieldNamaPasien.getText();
+        String umur = jTextFieldUmurPasien.getText();
+        String gender = jComboBoxGender.getSelectedItem().toString();
+        
+        Pasien pasien = new Pasien(idPasien,namaPasien,umur,gender);
+        
+        try{
+            openDB();
+            // cek input kosong
+            if(idPasien.isEmpty() || namaPasien.isEmpty() || umur.isEmpty() || idPasien=="" || namaPasien=="" || umur==""){
+                throw new InputKosongException();
+            }
+            
+            // cek input angka
+            int cek = Integer.parseInt(idPasien);
+            cek = Integer.parseInt(umur);
+            
+            // cek id terpakai
+            cek = pasien.cekDuplikatPasien(idPasien);
+            if(cek > 0){
+                throw new IdTerpakaiException();
+            }
+            int result = JOptionPane.showConfirmDialog(null, "Tambah data pasien ?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                pasien.inputDatabasePasien(idPasien, namaPasien, umur, gender);
+
+                Object[] row = {idPasien, namaPasien, umur, gender};
+                modelPasien.addRow(row);
+
+                jTextFieldIdPasien.setText("");
+                jTextFieldNamaPasien.setText("");
+                jTextFieldUmurPasien.setText("");
+                jComboBoxGender.setSelectedIndex(0);
+
+                jTextFieldIdPasien.setEditable(true);
+
+                JOptionPane.showMessageDialog(null, "Data pasien berhasil ditambahkan!");
+            }
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        } catch (InputKosongException ex) {
+            ex.tampilpesan();
+        } catch (IdTerpakaiException ex) {
+            ex.tampilpesan();
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input tidak valid");
+        }finally {
+            closeDB();
+        }
+        
+    }//GEN-LAST:event_jButtonInputPasienActionPerformed
+
+    private void jButtonInputDokterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInputDokterActionPerformed
+        String idDokter = jTextFieldIdDokter.getText();
+        String namaDokter = jTextFieldNamaDokter.getText();
+        String spesialis = jComboBoxSpesialis.getSelectedItem().toString();
+        
+        Dokter dokter = new Dokter(idDokter,namaDokter,spesialis);
+        
+        try{
+            openDB();
+            if(idDokter.isEmpty() || namaDokter.isEmpty() || spesialis.isEmpty() || idDokter=="" || namaDokter=="" || spesialis==""){
+                throw new InputKosongException();
+            }
+            
+            int cek = Integer.parseInt(idDokter);
+            
+            // cek id terpakai
+            cek = dokter.cekDuplikatDokter(idDokter);
+            if(cek > 0){
+                throw new IdTerpakaiException();
+            }
+            int result = JOptionPane.showConfirmDialog(null, "Tambah data dokter ?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+            dokter.inputDatabaseDokter(idDokter, namaDokter, spesialis);
+
+                Object[] row = {idDokter, namaDokter, spesialis};
+                modelDokter.addRow(row);
+
+                jTextFieldIdDokter.setText("");
+                jTextFieldNamaDokter.setText("");
+                jComboBoxSpesialis.setSelectedIndex(0);
+
+                jTextFieldIdDokter.setEditable(true);
+
+                JOptionPane.showMessageDialog(null, "Data dokter berhasil ditambahkan!");
+            }
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        } catch (InputKosongException ex) {
+            ex.tampilpesan();
+        } catch (IdTerpakaiException ex) {
+            ex.tampilpesan();
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input tidak valid");
+        }finally {
+            closeDB();
+        }
+    }//GEN-LAST:event_jButtonInputDokterActionPerformed
+
+    private void jButtonDeleteKhususActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteKhususActionPerformed
+        String nomorAntrian = jTextFieldNoKhusus.getText();
+        
+        AntrianRuangKhusus antrian = new AntrianRuangKhusus(nomorAntrian);
+
+        try{
+            openDB();
+            if(nomorAntrian.isEmpty() || nomorAntrian=="" ){
+                throw new InputKosongException();
+            }
+            
+            int nomorA = Integer.parseInt(nomorAntrian);
+            rs = s.executeQuery("SELECT COUNT(*) AS total FROM AntrianRuangKhusus");
+            rs.next();
+            int totalData = Integer.parseInt(rs.getString("total"));
+            int loop = totalData - nomorA;
+            int noSebelum = nomorA + 1;
+            
+            int selectedRow = jTableKhusus.getSelectedRow();
+            if (selectedRow == -1) {
+                throw new TidakAdaBarisDipilih();
+            }
+            int result = JOptionPane.showConfirmDialog(null, "Hapus Antrian "+nomorAntrian+" ?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                antrian.deleteDatabaseAntrian(nomorAntrian);
+
+                jTextFieldNoKhusus.setText("");
+                jTextFieldPasienKhusus.setText("");
+                jTextFieldDokterKhusus.setText("");
+                jTextFieldNoKhusus.setEditable(true);
+
+                modelKhusus.removeRow(jTableKhusus.getSelectedRow());
+
+                for(int i = 0; i < loop; i++){
+                    int noSesudah = nomorA + i;
+
+                    s.executeUpdate(
+                        "UPDATE AntrianRuangKhusus SET nomorAntrian = '" + noSesudah + "' WHERE nomorAntrian = '" + noSebelum + "';"
+                    );
+
+                    modelKhusus.setValueAt(noSesudah,noSesudah-1,0);
+
+                    noSebelum++;
+                }
+
+                JOptionPane.showMessageDialog(null, "Data berhasil dihapus dari antrian!");
+            }
+            
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        } catch (InputKosongException ex) {
+            ex.tampilpesan();
+        } catch (TidakAdaBarisDipilih ex) {
+            ex.tampilpesan();
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input tidak valid");
+        }finally {
+            closeDB();
+        }
+    }//GEN-LAST:event_jButtonDeleteKhususActionPerformed
+
+    private void jButtonDeletePasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeletePasienActionPerformed
+        String idPasien = jTextFieldIdPasien.getText();
+        
+        Pasien pasien = new Pasien(idPasien);
+
+        try{
+            openDB();
+            if(idPasien.isEmpty() || idPasien=="" ){
+                throw new InputKosongException();
+            }
+            
+            int cek = Integer.parseInt(idPasien);
+            
+            int selectedRow = jTablePasien.getSelectedRow();
+            if (selectedRow == -1) {
+                throw new TidakAdaBarisDipilih();
+            }
+            
+            rs = s.executeQuery("SELECT COUNT(*) AS cek FROM AntrianRuangUmum WHERE IDPasien = '" + idPasien + "' ");
+            rs.next();
+            int cekPasien = Integer.parseInt(rs.getString("cek"));
+            
+            rs = s.executeQuery("SELECT COUNT(*) AS cek2 FROM AntrianRuangKhusus WHERE IDPasien = '" + idPasien + "' ");
+            rs.next();
+            cekPasien = cekPasien + Integer.parseInt(rs.getString("cek2"));
+            
+            if(cekPasien>0){
+                throw new dalamAntrianException();
+            }
+            
+            int result = JOptionPane.showConfirmDialog(null, "Hapus data data pasien?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                pasien.deleteDatabasePasien(idPasien);
+
+                jTextFieldNamaPasien.setText("");
+                jTextFieldUmurPasien.setText("");
+                jComboBoxGender.setSelectedIndex(0);
+                jTextFieldIdPasien.setEditable(true);
+
+                modelPasien.removeRow(jTablePasien.getSelectedRow());
+
+                JOptionPane.showMessageDialog(null, "Data pasien berhasil dihapus!");
+            }
+            
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        } catch (InputKosongException ex) {
+            ex.tampilpesan();
+        } catch (TidakAdaBarisDipilih ex) {
+            ex.tampilpesan();
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input tidak valid");} catch (dalamAntrianException ex) {
+            ex.tampilpesan();
+        }finally {
+            closeDB();
+        }
+    }//GEN-LAST:event_jButtonDeletePasienActionPerformed
+
+    private void jButtonDeleteDokterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteDokterActionPerformed
+        String idDokter = jTextFieldIdDokter.getText();
+        
+        Dokter dokter = new Dokter(idDokter);
+
+        try{
+            openDB();
+            if(idDokter.isEmpty() || idDokter=="" ){
+                throw new InputKosongException();
+            }
+            
+            int cek = Integer.parseInt(idDokter);
+            
+            int selectedRow = jTableDokter.getSelectedRow();
+            if (selectedRow == -1) {
+                throw new TidakAdaBarisDipilih();
+            }
+            
+            rs = s.executeQuery("SELECT COUNT(*) AS cek FROM AntrianRuangUmum WHERE IDDokter = '" + idDokter + "' ");
+            rs.next();
+            int cekDokter = Integer.parseInt(rs.getString("cek"));
+            
+            rs = s.executeQuery("SELECT COUNT(*) AS cek2 FROM AntrianRuangKhusus WHERE IDDokter = '" + idDokter + "' ");
+            rs.next();
+            cekDokter = cekDokter + Integer.parseInt(rs.getString("cek2"));
+            
+            if(cekDokter>0){
+                throw new dalamAntrianException();
+            }
+            
+            int result = JOptionPane.showConfirmDialog(null, "Hapus data data dokter?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                dokter.deleteDatabaseDokter(idDokter);
+
+                jTextFieldIdDokter.setText("");
+                jTextFieldNamaDokter.setText("");
+                jComboBoxSpesialis.setSelectedIndex(0);
+                jTextFieldIdDokter.setEditable(true);
+
+                modelDokter.removeRow(jTableDokter.getSelectedRow());
+
+                JOptionPane.showMessageDialog(null, "Data dokter berhasil dihapus!");
+            }
+
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        } catch (InputKosongException ex) {
+            ex.tampilpesan();
+        } catch (dalamAntrianException ex) {
+            ex.tampilpesan();
+        } catch (TidakAdaBarisDipilih ex) {
+            ex.tampilpesan();
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input tidak valid");
+        }finally {
+            closeDB();
+        }
+    }//GEN-LAST:event_jButtonDeleteDokterActionPerformed
+
+    private void jButtonCariKhususActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCariKhususActionPerformed
+        String cariKhusus = jTextFieldCariKhusus.getText();
+        int rows = modelKhusus.getRowCount();
+        
+        try {
+            
+            openDB();
+            rs = s.executeQuery("SELECT * FROM AntrianRuangKhusus AS A2 "
+                    + "LEFT JOIN Pasien AS P ON A2.IDPasien = P.IDPasien "
+                    + "LEFT JOIN Dokter AS D ON A2.IDDokter = D.IDDokter "
+                    + "WHERE namaPasien LIKE '%" + cariKhusus + "%' "
+                    + " OR namaDokter LIKE '%" + cariKhusus + "%'");
+            
+            for(int i = rows - 1; i >=0; i--){
+                modelKhusus.removeRow(i); 
+            }
+
+            while(rs.next()){
+                Object[] row = {
+                        rs.getInt("nomorAntrian"),
+                        rs.getString("namaPasien"),
+                        rs.getString("namaDokter"),
+                        rs.getString("spesialisasi")
+                };
+                modelKhusus.addRow(row);
+            }
+            jTextFieldCariKhusus.setText("");
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+
+        }finally{
+            closeDB();
+        }
+    }//GEN-LAST:event_jButtonCariKhususActionPerformed
+
+    private void jButtonCariPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCariPasienActionPerformed
+        String cariPasien = jTextFieldCariPasien.getText();
+        int rows = modelPasien.getRowCount();
+        
+        try {
+            
+            openDB();
+            rs = s.executeQuery("SELECT * FROM Pasien WHERE namaPasien LIKE '%" + cariPasien + "%' "
+                    + " OR IDPasien LIKE '%" + cariPasien + "%'");
+            
+            for(int i = rows - 1; i >=0; i--){
+                modelPasien.removeRow(i); 
+            }
+
+            while(rs.next()){
+                Object[] row = {
+                        rs.getInt("IDPasien"),
+                        rs.getString("namaPasien"),
+                        rs.getInt("umur"),
+                        rs.getString("jenisKelamin")
+                };
+                modelPasien.addRow(row);
+            }
+            jTextFieldCariPasien.setText("");
+
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+
+        }finally{
+            closeDB();
+        }
+    }//GEN-LAST:event_jButtonCariPasienActionPerformed
+
+    private void jButtonCariDokterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCariDokterActionPerformed
+        
+        String cariDokter = jTextFieldCariDokter.getText();
+        int rows = modelDokter.getRowCount();
+        
+        try {
+            
+            openDB();
+            rs = s.executeQuery("SELECT * FROM Dokter WHERE namaDokter LIKE '%" + cariDokter + "%' "
+                    + " OR IDDokter LIKE '%" + cariDokter + "%'");
+            
+            for(int i = rows - 1; i >=0; i--){
+                modelDokter.removeRow(i); 
+            }
+
+            while(rs.next()){
+                Object[] row = {
+                        rs.getInt("IDDokter"),
+                        rs.getString("namaDokter"),
+                        rs.getString("spesialisasi")
+                };
+                modelDokter.addRow(row);
+            }
+            jTextFieldCariDokter.setText("");
+
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+
+        }finally{
+            closeDB();
+        }
+    }//GEN-LAST:event_jButtonCariDokterActionPerformed
+
+    private void jButtonClearUmumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClearUmumActionPerformed
+        jTextFieldNoUmum.setText("");
+        jTextFieldPasienUmum.setText("");
+        jTextFieldDokterUmum.setText("");
+        jTextFieldNoUmum.setEditable(true);
+    }//GEN-LAST:event_jButtonClearUmumActionPerformed
+
+    private void jButtonCariUmumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCariUmumActionPerformed
+        String cariUmum = jTextFieldCariUmum.getText();
+        int rows = modelUmum.getRowCount();
+
+        try {
+            openDB();
+            rs = s.executeQuery("SELECT * FROM AntrianRuangUmum AS A1 "
+                + "LEFT JOIN Pasien AS P ON A1.IDPasien = P.IDPasien "
+                + "LEFT JOIN Dokter AS D ON A1.IDDokter = D.IDDokter "
+                + "WHERE namaPasien LIKE '%" + cariUmum + "%'"
+                + " OR namaDokter LIKE '%" + cariUmum + "%'");
+
+            for(int i = rows - 1; i >=0; i--){
+                modelUmum.removeRow(i);
+            }
+
+            while(rs.next()){
+                Object[] row = {
+                    rs.getInt("nomorAntrian"),
+                    rs.getString("namaPasien"),
+                    rs.getString("namaDokter"),
+                    rs.getString("spesialisasi")
+                };
+                modelUmum.addRow(row);
+            }
+            jTextFieldCariUmum.setText("");
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+
+        }finally{
+            closeDB();
+        }
+    }//GEN-LAST:event_jButtonCariUmumActionPerformed
+
+    private void jButtonDeleteUmumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteUmumActionPerformed
+        String nomorAntrian = jTextFieldNoUmum.getText();
+
+        AntrianRuangUmum antrian = new AntrianRuangUmum(nomorAntrian);
+
+        try{
+            openDB();
+            if(nomorAntrian.isEmpty() || nomorAntrian=="" ){
+                throw new InputKosongException();
+            }
+
+            int nomorA = Integer.parseInt(nomorAntrian);
+            rs = s.executeQuery("SELECT COUNT(*) AS total FROM AntrianRuangUmum");
+            rs.next();
+            int totalData = Integer.parseInt(rs.getString("total"));
+            int loop = totalData - nomorA;
+            int noSebelum = nomorA + 1;
+
+            int selectedRow = jTableUmum.getSelectedRow();
+            if (selectedRow == -1) {
+                throw new TidakAdaBarisDipilih();
+            }
+
+            int result = JOptionPane.showConfirmDialog(null, "Hapus Antrian "+nomorAntrian+" ?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+
+                antrian.deleteDatabaseAntrian(nomorAntrian);
+
+                jTextFieldNoUmum.setText("");
+                jTextFieldPasienUmum.setText("");
+                jTextFieldDokterUmum.setText("");
+                jTextFieldNoUmum.setEditable(true);
+
+                modelUmum.removeRow(jTableUmum.getSelectedRow());
+
+                for(int i = 0; i < loop; i++){
+                    int noSesudah = nomorA + i;
+
+                    s.executeUpdate(
+                        "UPDATE AntrianRuangUmum SET nomorAntrian = '" + noSesudah + "' WHERE nomorAntrian = '" + noSebelum + "';"
+                    );
+
+                    modelUmum.setValueAt(noSesudah,noSesudah-1,0);
+
+                    noSebelum++;
+                }
+
+                JOptionPane.showMessageDialog(null, "Data berhasil dihapus dari antrian!");
+            }
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        } catch (InputKosongException ex) {
+            ex.tampilpesan();
+        } catch (TidakAdaBarisDipilih ex) {
+            ex.tampilpesan();
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input tidak valid");
+        }finally {
+            closeDB();
+        }
+    }//GEN-LAST:event_jButtonDeleteUmumActionPerformed
+
+    private void jButtonInputUmumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonInputUmumActionPerformed
+        String noAntrian = jTextFieldNoUmum.getText();
+        String idPasien = jTextFieldPasienUmum.getText();
+        String idDokter = jTextFieldDokterUmum.getText();
+
+        Pasien pasien = new Pasien(idPasien);
+        Dokter dokter = new Dokter(idDokter);
+        AntrianRuangUmum antrian = new AntrianRuangUmum(noAntrian,pasien,dokter);
+
+        try{
+            openDB();
+            // cek input kosong
+            if(noAntrian.isEmpty() || idPasien.isEmpty() || idDokter.isEmpty() || noAntrian=="" || idPasien=="" || idDokter==""){
+                throw new InputKosongException();
+            }
+            // cek input angka
+            int cek = Integer.parseInt(idPasien);
+            cek = Integer.parseInt(idDokter);
+
+            int nomorA = Integer.parseInt(noAntrian);
+            rs = s.executeQuery("SELECT COUNT(*) AS total FROM AntrianRuangUmum");
+            rs.next();
+            int totalData = Integer.parseInt(rs.getString("total"));
+            int loop = totalData - nomorA;
+            int noSebelum = totalData;
+            int noSesudah = totalData + 1;
+
+            // cek ada pasien dalam antrian
+            cek = pasien.cekAdaPasienUmum(idPasien);
+            if(cek > 0){
+                throw new PasienDapatAntrianException();
+            }
+
+            // cek pasien belum daftar
+            cek = antrian.cekDataPasien(pasien);
+            if(cek < 1){
+                throw new DataTidakTersediaException();
+            }
+
+            // cek dokter belum daftar
+            cek = antrian.cekDataDokter(dokter);
+            if(cek < 1){
+                throw new DataTidakTersediaException();
+            }
+            int result = JOptionPane.showConfirmDialog(null, "Tambah data ke antrian ?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                if(nomorA > 0){
+                    if(nomorA > totalData){
+                        noAntrian = String.valueOf(totalData + 1);
+
+                        antrian.inputDatabaseAntrian(noAntrian, pasien, dokter);
+
+                        rs = s.executeQuery("SELECT * FROM AntrianRuangUmum AS A1 "
+                            + "LEFT JOIN Pasien AS P ON A1.IDPasien = P.IDPasien "
+                            + "LEFT JOIN Dokter AS D ON A1.IDDokter = D.IDDokter "
+                            + "WHERE nomorAntrian = '" + noAntrian + "' ");
+
+                        rs.next();
+                        String namaPasien = rs.getString("namaPasien");
+                        String namaDokter = rs.getString("namaDokter");
+                        String spesialis = rs.getString("spesialisasi");
+
+                        Object[] row = {noAntrian, namaPasien, namaDokter, spesialis};
+                        modelUmum.addRow(row);
+
+                        JOptionPane.showMessageDialog(null, "Data berhasil ditambahkan ke Antrian!");
+
+                    }else{
+
+                        Object[] row1 = {"", "", "", ""};
+                        modelUmum.addRow(row1);
+
+                        for(int i = loop + 1; i > 0; i--){
+
+                            s.executeUpdate(
+                                "UPDATE AntrianRuangUmum SET nomorAntrian = '" + noSesudah + "' WHERE nomorAntrian = '" + noSebelum + "';"
+                            );
+
+                            int getNo = Integer.parseInt(jTableUmum.getValueAt(noSebelum-1,0).toString()) + 1;
+                            String pindahNo = String.valueOf(getNo);
+                            String pindahPasien = jTableUmum.getValueAt(noSebelum-1, 1).toString();
+                            String pindahDokter = jTableUmum.getValueAt(noSebelum-1, 2).toString();
+                            String pindahSpesialis = jTableUmum.getValueAt(noSebelum-1, 3).toString();
+
+                            modelUmum.setValueAt(pindahNo,noSebelum,0);
+                            modelUmum.setValueAt(pindahPasien,noSebelum,1);
+                            modelUmum.setValueAt(pindahDokter,noSebelum,2);
+                            modelUmum.setValueAt(pindahSpesialis,noSebelum,3);
+
+                            noSesudah--;
+                            noSebelum--;
+                        }
+
+                        antrian.inputDatabaseAntrian(noAntrian, pasien, dokter);
+
+                        rs = s.executeQuery("SELECT * FROM AntrianRuangUmum AS A1 "
+                            + "LEFT JOIN Pasien AS P ON A1.IDPasien = P.IDPasien "
+                            + "LEFT JOIN Dokter AS D ON A1.IDDokter = D.IDDokter "
+                            + "WHERE nomorAntrian = '" + noAntrian + "' ");
+
+                        rs.next();
+                        String namaPasien = rs.getString("namaPasien");
+                        String namaDokter = rs.getString("namaDokter");
+                        String spesialis = rs.getString("spesialisasi");
+
+                        modelUmum.setValueAt(noAntrian,noSebelum,0);
+                        modelUmum.setValueAt(namaPasien,noSebelum,1);
+                        modelUmum.setValueAt(namaDokter,noSebelum,2);
+                        modelUmum.setValueAt(spesialis,noSebelum,3);
+
+                        JOptionPane.showMessageDialog(null, "Data berhasil ditambahkan ke Antrian!");
+                    }
+
+                }else{
+                    JOptionPane.showMessageDialog(null, "Nomor antrian harus bilangan positif");
+                }
+
+                jTextFieldNoUmum.setText("");
+                jTextFieldPasienUmum.setText("");
+                jTextFieldDokterUmum.setText("");
+
+                jTextFieldNoUmum.setEditable(true);
+            }
+
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        } catch (InputKosongException ex) {
+            ex.tampilpesan();
+        } catch (PasienDapatAntrianException ex) {
+            ex.tampilpesan();
+        } catch (DataTidakTersediaException ex) {
+            ex.tampilpesan();
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input tidak valid");
+        }finally {
+            closeDB();
+        }
+    }//GEN-LAST:event_jButtonInputUmumActionPerformed
+
+    private void jButtonUpdateUmumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateUmumActionPerformed
+        String noAntrian = jTextFieldNoUmum.getText();
+        String idPasien = jTextFieldPasienUmum.getText();
+        String idDokter = jTextFieldDokterUmum.getText();
+
+        Pasien pasien = new Pasien(idPasien);
+        Dokter dokter = new Dokter(idDokter);
+        AntrianRuangUmum antrian = new AntrianRuangUmum(noAntrian,pasien,dokter);
+
+        try{
+            if(noAntrian.isEmpty() || idPasien.isEmpty() || idDokter.isEmpty() || noAntrian=="" || idPasien=="" || idDokter==""){
+                throw new InputKosongException();
+            }
+
+            int cek = Integer.parseInt(noAntrian);
+            cek = Integer.parseInt(idPasien);
+            cek = Integer.parseInt(idDokter);
+
+            int selectedRow = jTableUmum.getSelectedRow();
+            if (selectedRow == -1) {
+                throw new TidakAdaBarisDipilih();
+            }
+
+            cek = pasien.cekAdaPasienUmum(idPasien);
+            if(cek > 0 && Integer.parseInt(idPasien) != Integer.parseInt(antrian.getIdPasienDatabase(noAntrian))){
+                throw new PasienDapatAntrianException();
+            }
+
+            cek = antrian.cekDataPasien(pasien);
+            if(cek < 1){
+                throw new DataTidakTersediaException();
+            }
+
+            // cek dokter belum daftar
+            cek = antrian.cekDataDokter(dokter);
+            if(cek < 1){
+                throw new DataTidakTersediaException();
+            }
+
+            openDB();
+
+            int result = JOptionPane.showConfirmDialog(null, "Update Antrian "+noAntrian+" ?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+
+                antrian.updateDatabaseAntrian(noAntrian, pasien, dokter);
+
+                rs = s.executeQuery("SELECT * FROM AntrianRuangUmum AS A1 "
+                    + "LEFT JOIN Pasien AS P ON A1.IDPasien = P.IDPasien "
+                    + "LEFT JOIN Dokter AS D ON A1.IDDokter = D.IDDokter "
+                    + "WHERE nomorAntrian = '" + noAntrian + "' ");
+
+                rs.next();
+                String namaPasien = rs.getString("namaPasien");
+                String namaDokter = rs.getString("namaDokter");
+
+                modelUmum.setValueAt(noAntrian,jTableUmum.getSelectedRow(),0);
+                modelUmum.setValueAt(namaPasien,jTableUmum.getSelectedRow(),1);
+                modelUmum.setValueAt(namaDokter,jTableUmum.getSelectedRow(),2);
+
+                jTextFieldNoUmum.setText("");
+                jTextFieldPasienUmum.setText("");
+                jTextFieldDokterUmum.setText("");
+
+                jTextFieldNoUmum.setEditable(true);
+
+                JOptionPane.showMessageDialog(null, "Antrian berhasil diupdate!");
+            }
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        } catch (InputKosongException ex) {
+            ex.tampilpesan();
+        } catch (TidakAdaBarisDipilih ex) {
+            ex.tampilpesan();
+        } catch (DataTidakTersediaException ex) {
+            ex.tampilpesan();
+        } catch (PasienDapatAntrianException ex) {
+            ex.tampilpesan();
+        }catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(null, "Input tidak valid");
+        }finally {
+            closeDB();
+        }
+
+    }//GEN-LAST:event_jButtonUpdateUmumActionPerformed
+
+    private void jTableUmumMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableUmumMouseClicked
+
+        try{
+            openDB();
+
+            jTextFieldNoUmum.setEditable(false);
+
+            int row = jTableUmum.getSelectedRow();
+
+            String noAntrian = jTableUmum.getValueAt(row, 0).toString();
+
+            rs = s.executeQuery("SELECT * FROM AntrianRuangUmum WHERE nomorAntrian = '" + noAntrian + "' ");
+
+            rs.next();
+            String idPasien = rs.getString("IDPasien");
+            String idDokter = rs.getString("IDDokter");
+
+            jTextFieldNoUmum.setText(noAntrian);
+            jTextFieldPasienUmum.setText(idPasien);
+            jTextFieldDokterUmum.setText(idDokter);
+
+        }catch (SQLException | ClassNotFoundException ex){
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+        }finally {
+            closeDB();
+        }
+
+    }//GEN-LAST:event_jTableUmumMouseClicked
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        Main frame = new Main();
+        frame.setVisible(true);
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonCariDokter;
+    private javax.swing.JButton jButtonCariKhusus;
+    private javax.swing.JButton jButtonCariPasien;
+    private javax.swing.JButton jButtonCariUmum;
+    private javax.swing.JButton jButtonClearDokter;
+    private javax.swing.JButton jButtonClearKhusus;
+    private javax.swing.JButton jButtonClearPasien;
+    private javax.swing.JButton jButtonClearUmum;
+    private javax.swing.JButton jButtonDeleteDokter;
+    private javax.swing.JButton jButtonDeleteKhusus;
+    private javax.swing.JButton jButtonDeletePasien;
+    private javax.swing.JButton jButtonDeleteUmum;
+    private javax.swing.JButton jButtonInputDokter;
+    private javax.swing.JButton jButtonInputKhusus;
+    private javax.swing.JButton jButtonInputPasien;
+    private javax.swing.JButton jButtonInputUmum;
+    private javax.swing.JButton jButtonUpdateDokter;
+    private javax.swing.JButton jButtonUpdateKhusus;
+    private javax.swing.JButton jButtonUpdatePasien;
+    private javax.swing.JButton jButtonUpdateUmum;
+    private javax.swing.JComboBox<String> jComboBoxGender;
+    private javax.swing.JComboBox<String> jComboBoxSpesialis;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTabbedPane jTabbedPaneMenu;
+    private javax.swing.JTabbedPane jTabbedPaneRuangan;
+    private javax.swing.JTable jTableDokter;
+    private javax.swing.JTable jTableKhusus;
+    private javax.swing.JTable jTablePasien;
+    private javax.swing.JTable jTableUmum;
+    private javax.swing.JTextField jTextFieldCariDokter;
+    private javax.swing.JTextField jTextFieldCariKhusus;
+    private javax.swing.JTextField jTextFieldCariPasien;
+    private javax.swing.JTextField jTextFieldCariUmum;
+    private javax.swing.JTextField jTextFieldDokterKhusus;
+    private javax.swing.JTextField jTextFieldDokterUmum;
+    private javax.swing.JTextField jTextFieldIdDokter;
+    private javax.swing.JTextField jTextFieldIdPasien;
+    private javax.swing.JTextField jTextFieldNamaDokter;
+    private javax.swing.JTextField jTextFieldNamaPasien;
+    private javax.swing.JTextField jTextFieldNoKhusus;
+    private javax.swing.JTextField jTextFieldNoUmum;
+    private javax.swing.JTextField jTextFieldPasienKhusus;
+    private javax.swing.JTextField jTextFieldPasienUmum;
+    private javax.swing.JTextField jTextFieldUmurPasien;
+    private javax.swing.JPanel mainPanel;
+    // End of variables declaration//GEN-END:variables
+}
